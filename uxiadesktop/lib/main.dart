@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:bcrypt/bcrypt.dart';
 
 
 Future<void> sendPetition(urlHost) async {
@@ -24,7 +25,8 @@ Future<void> sendPetition(urlHost) async {
 }
 
 Future<void> sendLoginPetition(String urlHost, String email, String password) async {
-  final url = Uri.parse('http://$urlHost:3000/api/admin/usuaris/login');
+  final url = Uri.parse('https://$urlHost/api/admin/usuaris/login');
+  print("Intentando login en $url con $email y $password");
 
   final response = await http.post(
     url,
@@ -51,9 +53,9 @@ void main() {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+
     return MaterialApp(
       title: 'Admin App',
       debugShowCheckedModeBanner: false,
