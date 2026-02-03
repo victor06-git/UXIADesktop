@@ -57,11 +57,12 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
 
     return MaterialApp(
+      
       title: 'Admin App',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         
-        colorScheme: .fromSeed(seedColor: Colors.deepPurple),
+        colorScheme: .fromSeed(seedColor: Colors.deepPurple, brightness: Brightness.dark),
       ),
       home: const MyHomePage(title: 'Desktop Admin App'),
     );
