@@ -150,6 +150,8 @@ Future<bool> testImageAnalysis() async {
   final host = await SettingsManager().loadUrl();
   final url = Uri.parse('https://$host/api/admin/image-analysis/test');
 
+  return false;
+
   
 }
 
@@ -371,13 +373,13 @@ class _MyMainPageState extends State<MyMainPage> {
                 testToken().then((isValid) {
                   if (isValid) {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('Token is valid!')),
+                      SnackBar(content: Text('Token válido')),
                     );
                   } else {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('Token is invalid. Please log in again.')),
+                      SnackBar(content: Text('Token no válido')),
                     );
-                    Navigator.pop(context);
+                    
                   }
                 });
               },
@@ -391,7 +393,7 @@ class _MyMainPageState extends State<MyMainPage> {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(content: Text('Logout successful!')),
                     );
-                    Navigator.pop(context);
+                    //Navigator.pop(context);
                   } else {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(content: Text('Logout failed. Please try again.')),
