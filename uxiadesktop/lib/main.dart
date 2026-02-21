@@ -5,6 +5,7 @@ import 'package:bcrypt/bcrypt.dart';
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
 import 'package:xml/xml.dart';
+import 'pages/stats_page.dart';
 
 class SettingsManager {
   // 1. Obtener la ruta del archivo
@@ -22,10 +23,13 @@ class SettingsManager {
   Future<void> saveUrl(String url, String token) async {
     final builder = XmlBuilder();
     builder.processing('xml', 'version="1.0"');
-    builder.element('settings', nest: () {
-      builder.element('url', nest: url);
-      builder.element('token', nest: token);
-    });
+    builder.element(
+      'settings',
+      nest: () {
+        builder.element('url', nest: url);
+        builder.element('token', nest: token);
+      },
+    );
 
     final xmlDocument = builder.buildDocument();
     final file = await _localFile;
@@ -54,21 +58,20 @@ class SettingsManager {
   }
 
   Future<String> loadUrl() async {
-  try {
-    final file = await _localFile;
-    String contents = await file.readAsString();
-    final document = XmlDocument.parse(contents);
+    try {
+      final file = await _localFile;
+      String contents = await file.readAsString();
+      final document = XmlDocument.parse(contents);
 
-    final url = document.findAllElements('url').first.innerText;
+      final url = document.findAllElements('url').first.innerText;
 
-    print("URL Cargada: $url");
-    return url;
-
-  } catch (e) {
-    print("Aún no hay archivo de configuración o error al leer.");
-    return "";
+      print("URL Cargada: $url");
+      return url;
+    } catch (e) {
+      print("Aún no hay archivo de configuración o error al leer.");
+      return "";
+    }
   }
-}
 
   Future<String> loadToken() async {
     try {
@@ -80,22 +83,12 @@ class SettingsManager {
 
       print("Token Cargado: $token");
       return token;
-
     } catch (e) {
       print("Aún no hay archivo de configuración o error al leer.");
       return "";
     }
   }
-
 }
-
-
-
-
-
-
-
-
 
 void main() {
   runApp(const MyApp());
@@ -106,14 +99,14 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     return MaterialApp(
-      
       title: 'Admin App',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        
-        colorScheme: .fromSeed(seedColor: Colors.deepPurple, brightness: Brightness.dark),
+        colorScheme: .fromSeed(
+          seedColor: Colors.deepPurple,
+          brightness: Brightness.dark,
+        ),
       ),
       home: const MyHomePage(title: 'Desktop Admin App'),
     );
@@ -124,22 +117,19 @@ Future<bool> logoutPetition() async {
   final host = await SettingsManager().loadUrl();
   final url = Uri.parse('https://$host/api/admin/usuaris/logout');
 
-    final response = await http.post(
+  final response = await http.post(
     url,
     headers: {'Content-Type': 'application/json'},
-    body: jsonEncode({
-      'token': await SettingsManager().loadToken(),
-    }),
+    body: jsonEncode({'token': await SettingsManager().loadToken()}),
   );
 
   final jsonResponse = jsonDecode(response.body);
   print(jsonResponse);
 
-  if (jsonResponse['status'] == "OK" ) {
+  if (jsonResponse['status'] == "OK") {
     print('Logout successful: ${response.body}');
     SettingsManager().deleteToken();
     return true;
-
   } else {
     print('Logout failed: ${response.body}');
     return false;
@@ -151,29 +141,24 @@ Future<bool> testImageAnalysis() async {
   final url = Uri.parse('https://$host/api/admin/image-analysis/test');
 
   return false;
-
-  
 }
 
 Future<bool> testToken() async {
   final host = await SettingsManager().loadUrl();
   final url = Uri.parse('https://$host/api/admin/usuaris/testtoken');
 
-    final response = await http.post(
+  final response = await http.post(
     url,
     headers: {'Content-Type': 'application/json'},
-    body: jsonEncode({
-      'token': await SettingsManager().loadToken(),
-    }),
+    body: jsonEncode({'token': await SettingsManager().loadToken()}),
   );
 
   final jsonResponse = jsonDecode(response.body);
   print(jsonResponse);
 
-  if (jsonResponse['status'] == "OK" ) {
+  if (jsonResponse['status'] == "OK") {
     print('Token válido: ${response.body}');
     return true;
-
   } else {
     print('Token inválido: ${response.body}');
     return false;
@@ -186,11 +171,7 @@ Future<void> sendPetition(urlHost) async {
   final response = await http.post(
     url,
     headers: {'Content-Type': 'application/json'},
-    body: jsonEncode({
-      'prompt': 'Hola desde Flutter!',
-      'stream': false,
-      
-    }),
+    body: jsonEncode({'prompt': 'Hola desde Flutter!', 'stream': false}),
   );
 
   if (response.statusCode == 201) {
@@ -200,25 +181,25 @@ Future<void> sendPetition(urlHost) async {
   }
 }
 
-Future<bool> sendLoginPetition(String urlHost, String email, String password) async {
+Future<bool> sendLoginPetition(
+  String urlHost,
+  String email,
+  String password,
+) async {
   final url = Uri.parse('https://$urlHost/api/admin/usuaris/login');
   print("Intentando login en $url con $email y $password");
-  
 
   final response = await http.post(
     url,
     headers: {'Content-Type': 'application/json'},
-    body: jsonEncode({
-      'email': email,
-      'password': password,
-    }),
+    body: jsonEncode({'email': email, 'password': password}),
   );
 
   final jsonResponse = jsonDecode(response.body);
 
   print(jsonResponse);
 
-  if (jsonResponse['status'] == "OK" ) {
+  if (jsonResponse['status'] == "OK") {
     SettingsManager().saveUrl(urlHost, jsonResponse['data']['token']);
     print('Éxito: ${response.body}');
 
@@ -255,10 +236,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    
-
     return Scaffold(
-      
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
 
@@ -268,60 +246,59 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text("Admin Desktop App", style: Theme.of(context).textTheme.headlineMedium),
-            SizedBox(height: 16,),
+            Text(
+              "Admin Desktop App",
+              style: Theme.of(context).textTheme.headlineMedium,
+            ),
+            SizedBox(height: 16),
 
             SizedBox(
               width: 300,
               child: TextField(
                 controller: TextEditingController(text: url),
-              decoration: InputDecoration(
-                border: OutlineInputBorder(),
-                labelText: 'URL',
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(),
+                  labelText: 'URL',
                 ),
-              onChanged: (value) {
-                url = value;
-              },
-              ),
-            )
-            ,
-            SizedBox(height: 16,),
-            SizedBox(
-              width: 300,
-              child: TextField(
-              decoration: InputDecoration(
-                border: OutlineInputBorder(),
-                labelText: 'User (E-mail)',
-                ),
-              onChanged:(value) {
-                user = value;
-              },
+                onChanged: (value) {
+                  url = value;
+                },
               ),
             ),
-            
-            SizedBox(height: 16,),
+            SizedBox(height: 16),
             SizedBox(
               width: 300,
               child: TextField(
-              obscureText: true,
-              decoration: InputDecoration(
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(),
+                  labelText: 'User (E-mail)',
+                ),
+                onChanged: (value) {
+                  user = value;
+                },
+              ),
+            ),
+
+            SizedBox(height: 16),
+            SizedBox(
+              width: 300,
+              child: TextField(
+                obscureText: true,
+                decoration: InputDecoration(
                   border: OutlineInputBorder(),
                   labelText: 'Password',
                 ),
-              onChanged:(value) {
-                password = value;
-              },
+                onChanged: (value) {
+                  password = value;
+                },
               ),
             ),
-          
-            SizedBox(height: 16,),
+
+            SizedBox(height: 16),
 
             ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                minimumSize: Size(300, 48),
-              ),
+              style: ElevatedButton.styleFrom(minimumSize: Size(300, 48)),
               onPressed: () {
-        
                 sendLoginPetition(url, user, password).then((success) {
                   if (success) {
                     ScaffoldMessenger.of(context).showSnackBar(
@@ -333,16 +310,19 @@ class _MyHomePageState extends State<MyHomePage> {
                     );
                   } else {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('Login failed. Please check your credentials.')),
+                      SnackBar(
+                        content: Text(
+                          'Login failed. Please check your credentials.',
+                        ),
+                      ),
                     );
                   }
-                },
-                );
+                });
               },
               child: Text('Login'),
             ),
           ],
-      ),
+        ),
       ),
     );
   }
@@ -350,7 +330,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
 class MyMainPage extends StatefulWidget {
   const MyMainPage({super.key});
-  
+
   @override
   State<StatefulWidget> createState() {
     return _MyMainPageState();
@@ -361,9 +341,7 @@ class _MyMainPageState extends State<MyMainPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Admin App"),
-      ),
+      appBar: AppBar(title: Text("Admin App")),
       body: Center(
         child: Row(
           mainAxisSize: MainAxisSize.min,
@@ -372,20 +350,19 @@ class _MyMainPageState extends State<MyMainPage> {
               onPressed: () {
                 testToken().then((isValid) {
                   if (isValid) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('Token válido')),
-                    );
+                    ScaffoldMessenger.of(
+                      context,
+                    ).showSnackBar(SnackBar(content: Text('Token válido')));
                   } else {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('Token no válido')),
-                    );
-                    
+                    ScaffoldMessenger.of(
+                      context,
+                    ).showSnackBar(SnackBar(content: Text('Token no válido')));
                   }
                 });
               },
               child: Text("Test token"),
             ),
-            SizedBox(width: 10,),
+            SizedBox(width: 10),
             ElevatedButton(
               onPressed: () {
                 logoutPetition().then((success) {
@@ -396,14 +373,28 @@ class _MyMainPageState extends State<MyMainPage> {
                     //Navigator.pop(context);
                   } else {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('Logout failed. Please try again.')),
+                      SnackBar(
+                        content: Text('Logout failed. Please try again.'),
+                      ),
                     );
                   }
                 });
-              }, 
-              child: Text('Logout'))
-          ],)
-        ,
+              },
+              child: Text('Logout'),
+            ),
+            SizedBox(width: 10),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(backgroundColor: Colors.blueGrey),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const StatsPage()),
+                );
+              },
+              child: const Text("Estadístiques"),
+            ),
+          ],
+        ),
       ),
     );
   }
