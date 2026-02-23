@@ -6,6 +6,7 @@ import 'dart:io';
 import 'package:path_provider/path_provider.dart';
 import 'package:xml/xml.dart';
 import 'pages/stats_page.dart';
+import 'pages/users_page.dart';
 
 class SettingsManager {
   // 1. Obtener la ruta del archivo
@@ -384,7 +385,6 @@ class _MyMainPageState extends State<MyMainPage> {
             ),
             SizedBox(width: 10),
             ElevatedButton(
-              style: ElevatedButton.styleFrom(backgroundColor: Colors.blueGrey),
               onPressed: () {
                 Navigator.push(
                   context,
@@ -392,6 +392,16 @@ class _MyMainPageState extends State<MyMainPage> {
                 );
               },
               child: const Text("Estadístiques"),
+            ),
+            SizedBox(width: 10),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const UsersPage()),
+                );
+              },
+              child: const Text("Usuaris"),
             ),
           ],
         ),
