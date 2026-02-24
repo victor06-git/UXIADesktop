@@ -34,23 +34,6 @@ class User {
     'role': role,
   };
 
-  /// Copia con cambios
-  User copyWith({
-    String? id,
-    String? email,
-    String? nickname,
-    int? telephone,
-    String? role,
-  }) {
-    return User(
-      id: id ?? this.id,
-      email: email ?? this.email,
-      nickname: nickname ?? this.nickname,
-      telephone: telephone ?? this.telephone,
-      role: role ?? this.role,
-    );
-  }
-
   @override
   String toString() => 'User(id: $id, email: $email, nickname: $nickname)';
 }

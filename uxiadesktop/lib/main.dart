@@ -37,7 +37,6 @@ class SettingsManager {
 
     // Escribir el archivo como string
     await file.writeAsString(xmlDocument.toXmlString(pretty: true));
-    print("Ajustes guardados en: ${file.path}");
   }
 
   Future<void> deleteToken() async {
@@ -371,7 +370,6 @@ class _MyMainPageState extends State<MyMainPage> {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(content: Text('Logout successful!')),
                     );
-                    //Navigator.pop(context);
                   } else {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import '../models/user_stats.dart'; // Importa tu modelo desde la carpeta models
-import '../main.dart'; // Para acceder a SettingsManager y la lógica global
+import '../models/user_stats.dart';
+import '../main.dart';
 
 class UsersPage extends StatefulWidget {
   const UsersPage({super.key});
@@ -46,7 +46,6 @@ class _UsersPageState extends State<UsersPage> {
       if (response.statusCode == 200) {
         final dynamic decodedData = jsonDecode(response.body);
 
-        // Verificación de seguridad: ¿Es una lista o un objeto con una lista dentro?
         List<dynamic> userList = [];
         if (decodedData is List) {
           userList = decodedData;
@@ -112,7 +111,6 @@ class _UsersPageState extends State<UsersPage> {
 
       final url = Uri.parse('https://$host/api/admin/usuaris/register');
 
-      // 1. CORRECCIÓN: La clave debe ser 'telefon', no 'telephone'
       final Map<String, dynamic> userData = {
         'nickname': nickname,
         'email': email,
@@ -136,11 +134,9 @@ class _UsersPageState extends State<UsersPage> {
         _fetchUsers();
         _showSnackBar("Usuari creat correctament!");
       } else {
-        // Esto te dirá exactamente qué campo falta o está mal
         _showSnackBar("Error: ${response.body}");
       }
     } catch (e) {
-      print("Error fatal: $e");
       _showSnackBar("Error de conexión");
     }
   }
@@ -159,18 +155,15 @@ class _UsersPageState extends State<UsersPage> {
     final passCtrl = TextEditingController();
     final telefonCtrl = TextEditingController();
 
-    // 1. Quitamos el ValueNotifier si vamos a usar StatefulBuilder para simplificar
     bool isAdminValue = false;
 
     showDialog(
       context: context,
-      // 2. AÑADIMOS EL STATEFULBUILDER AQUÍ
       builder: (context) => StatefulBuilder(
         builder: (context, setDialogState) {
           return AlertDialog(
             title: const Text("Nou Usuari"),
             content: SingleChildScrollView(
-              // Añadido para evitar errores de espacio
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -197,11 +190,9 @@ class _UsersPageState extends State<UsersPage> {
                   CheckboxListTile(
                     title: const Text("Admin"),
                     value: isAdminValue,
-                    // Esto lo mueve a la IZQUIERDA
                     controlAffinity: ListTileControlAffinity.leading,
                     contentPadding: EdgeInsets.zero,
                     onChanged: (val) {
-                      // 3. AHORA SÍ: setDialogState refresca el diálogo
                       setDialogState(() {
                         isAdminValue = val ?? false;
                       });
